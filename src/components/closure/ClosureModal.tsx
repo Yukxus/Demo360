@@ -3,6 +3,8 @@ import {
   X, 
   Sparkles, 
   CheckCircle2, 
+  MessageSquare,
+  ArrowRight
 } from 'lucide-react';
 import confetti from 'canvas-confetti';
 
@@ -19,10 +21,20 @@ export const ClosureModal: React.FC<ClosureModalProps> = ({
 }) => {
   const [formSent, setFormSent] = useState(false);
   const [contactName, setContactName] = useState('');
-  const [contactEmail, setContactEmail] = useState('');
   const [contactCompany, setContactCompany] = useState('');
+  const [contactEmail, setContactEmail] = useState('');
 
   if (!isOpen) return null;
+
+  const getWhatsAppUrl = () => {
+    const text = `Hola Tomás, estuve probando la demo interactiva de Enfoque360 AI y me gustaría coordinar para identificar el primer caso de IA aplicada en mi empresa.
+
+*Nombre:* ${contactName.trim() || 'Interesado'}
+*Empresa:* ${contactCompany.trim() || 'No especificada'}
+*Contacto:* ${contactEmail.trim() || 'WhatsApp'}`;
+
+    return `https://wa.me/5493516781319?text=${encodeURIComponent(text)}`;
+  };
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -38,6 +50,10 @@ export const ClosureModal: React.FC<ClosureModalProps> = ({
     } catch {
       // Safe fallback
     }
+
+    // Open WhatsApp in new tab
+    const url = getWhatsAppUrl();
+    window.open(url, '_blank');
   };
 
   return (
@@ -110,9 +126,14 @@ export const ClosureModal: React.FC<ClosureModalProps> = ({
           {/* Form or Success message */}
           {!formSent ? (
             <form onSubmit={handleSubmit} className="p-5 rounded-2xl bg-[#1B0C12] border border-white/[0.08] text-left space-y-3">
-              <div className="text-xs font-bold text-[#FFFDF9] uppercase tracking-wider mb-1 flex items-center gap-1.5">
-                <Sparkles className="w-3.5 h-3.5 text-[#F97316]" />
-                <span>¿Querés identificar el primer caso en tu empresa?</span>
+              <div className="text-xs font-bold text-[#FFFDF9] uppercase tracking-wider mb-1 flex items-center justify-between">
+                <span className="flex items-center gap-1.5">
+                  <Sparkles className="w-3.5 h-3.5 text-[#F97316]" />
+                  ¿Querés identificar el primer caso en tu empresa?
+                </span>
+                <span className="text-[11px] text-emerald-400 font-semibold flex items-center gap-1">
+                  <MessageSquare className="w-3 h-3" /> WhatsApp directo
+                </span>
               </div>
 
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5 text-xs">
@@ -134,9 +155,8 @@ export const ClosureModal: React.FC<ClosureModalProps> = ({
               </div>
 
               <input
-                type="email"
-                required
-                placeholder="Email o Teléfono de contacto"
+                type="text"
+                placeholder="Teléfono o Email (opcional)"
                 value={contactEmail}
                 onChange={(e) => setContactEmail(e.target.value)}
                 className="w-full px-3 py-2 rounded-lg bg-[#0B0507] border border-white/[0.1] text-[#FAF5EF] placeholder-[#8E8276] focus:outline-none focus:border-[#F97316] text-xs"
@@ -146,16 +166,27 @@ export const ClosureModal: React.FC<ClosureModalProps> = ({
                 type="submit"
                 className="w-full py-3 rounded-xl font-bold text-xs sm:text-sm bg-gradient-to-r from-[#FF8C42] via-[#F97316] to-[#FB7185] text-[#0B0507] hover:shadow-warm-glow-lg transition-all flex items-center justify-center gap-2 mt-2"
               >
-                <span>Encontrar el primer caso →</span>
+                <MessageSquare className="w-4 h-4" />
+                <span>Encontrar el primer caso por WhatsApp →</span>
               </button>
             </form>
           ) : (
-            <div className="p-5 rounded-2xl bg-emerald-950/40 border border-emerald-500/30 text-emerald-300 space-y-2 animate-in zoom-in-95">
+            <div className="p-5 rounded-2xl bg-emerald-950/40 border border-emerald-500/30 text-emerald-300 space-y-3 animate-in zoom-in-95">
               <CheckCircle2 className="w-8 h-8 text-emerald-400 mx-auto" />
-              <h4 className="text-base font-bold text-white">¡Solicitud recibida con éxito!</h4>
+              <h4 className="text-base font-bold text-white">¡Abriendo WhatsApp para coordinar!</h4>
               <p className="text-xs text-emerald-200">
-                El equipo de consultores de Enfoque360 se contactará con vos para coordinar el relevamiento preliminar.
+                Si no se abrió automáticamente, podés hacer click en el botón a continuación para enviar tu mensaje directamente:
               </p>
+              <a
+                href={getWhatsAppUrl()}
+                target="_blank"
+                rel="noreferrer"
+                className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-emerald-500 hover:bg-emerald-600 text-white font-bold text-xs transition-colors"
+              >
+                <MessageSquare className="w-4 h-4" />
+                <span>Abrir WhatsApp con Tomás (+54 351 678 1319)</span>
+                <ArrowRight className="w-3.5 h-3.5" />
+              </a>
             </div>
           )}
 
